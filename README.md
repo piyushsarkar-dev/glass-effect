@@ -32,36 +32,34 @@ _Sample background used in demo_
 
 Customize css/style.css for your own background, colors, or blur level.
 
-🛠️ Technologies
-HTML5
+## 🛠️ Technologies
 
-CSS3 (backdrop-filter, flexbox)
+-   **HTML5**
+-   **CSS3** (backdrop-filter, flexbox)
+-   **Bootstrap** (optional, included in demo)
 
-Bootstrap (optional, included in demo)
+---
 
-📂 Project Structure
-arduino
+## 📂 Project Structure
+
+index.html
+css/
+├── style.css
+└── bootstrap.min.css
+js/
+├── script.js
+└── bootstrap.bundle.min.js
+
+yaml
 Copy code
-.
-├── index.html
-├── css/
-│ ├── style.css
-│ └── bootstrap.min.css
-├── js/
-│ ├── script.js
-│ └── bootstrap.bundle.min.js
-🌍 Live Demo
-Host it easily with GitHub Pages:
 
-Go to your repo → Settings → Pages
+---
 
-Select branch main (or master) and folder /root
+## 🌍 Live Demo
 
-Your project will be live at:
+Host it easily with **GitHub Pages**:
 
-arduino
-Copy code
-https://piyushsarkar-dev.github.io/glass-effect/
-👨‍💻 Author
-Mr. Piyush
-🔗 GitHub Profile
+1. Go to your repo → Settings → Pages
+2. Select branch `main` (or `master`) and folder `/root`
+3. Your project will be live at:  
+   👉 https://piyushsarkar-dev.github.io/glass-effect
