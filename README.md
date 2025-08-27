@@ -50,16 +50,4 @@ js/
 ├── script.js
 └── bootstrap.bundle.min.js
 
-yaml
-Copy code
-
 ---
-
-## 🌍 Live Demo
-
-Host it easily with **GitHub Pages**:
-
-1. Go to your repo → Settings → Pages
-2. Select branch `main` (or `master`) and folder `/root`
-3. Your project will be live at:  
-   👉 https://piyushsarkar-dev.github.io/glass-effect
