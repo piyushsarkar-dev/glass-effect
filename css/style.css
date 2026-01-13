@@ -239,6 +239,29 @@ body.theme-light .app-bg::before {
 	z-index: 1;
 }
 
+.glass-center {
+	min-height: 220px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1.25rem;
+	position: relative;
+	z-index: 1;
+}
+
+.glass-center__text {
+	font-weight: 800;
+	letter-spacing: 0.6px;
+	text-transform: uppercase;
+	font-size: clamp(1.15rem, 2.8vw, 1.8rem);
+	color: var(--ui-text);
+	text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+body.theme-light .glass-center__text {
+	text-shadow: none;
+}
+
 .glass-title {
 	font-size: 1.05rem;
 	font-weight: 700;

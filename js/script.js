@@ -5,10 +5,6 @@
 	const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
 	const root = document.documentElement;
-	const previewTitle = $("#previewTitle");
-	const previewSubtitle = $("#previewSubtitle");
-	const previewBodyText = $("#previewBodyText");
-	const previewBadge = $("#previewBadge");
 	const supportPill = $("#supportPill");
 	const themeToggle = $("#themeToggle");
 	const appBg = $(".app-bg");
@@ -30,9 +26,6 @@
 		tintAlpha: $("#tintAlpha"),
 		noise: $("#noise"),
 		shadow: $("#shadow"),
-		textTitle: $("#textTitle"),
-		textSubtitle: $("#textSubtitle"),
-		textBody: $("#textBody"),
 	};
 
 	const buttons = {
@@ -138,39 +131,6 @@
 	let defaultVars = null;
 	let currentTheme = "dark";
 	let activeBackgroundKey = "photo";
-	let currentText = {
-		title: "iPhone Frosted",
-		subtitle: "Clean, soft blur — mobile style.",
-		body: "Use the controls to tweak blur, opacity, tint, border, noise.",
-	};
-
-	function applyText(next) {
-		currentText = {
-			title:
-				typeof next?.title === "string" && next.title.trim()
-					? next.title
-					: currentText.title,
-			subtitle:
-				typeof next?.subtitle === "string" && next.subtitle.trim()
-					? next.subtitle
-					: currentText.subtitle,
-			body:
-				typeof next?.body === "string" && next.body.trim()
-					? next.body
-					: currentText.body,
-		};
-
-		if (previewTitle) previewTitle.textContent = currentText.title;
-		if (previewSubtitle) previewSubtitle.textContent = currentText.subtitle;
-		if (previewBodyText) previewBodyText.textContent = currentText.body;
-
-		if (inputs.textTitle) inputs.textTitle.value = currentText.title;
-		if (inputs.textSubtitle)
-			inputs.textSubtitle.value = currentText.subtitle;
-		if (inputs.textBody) inputs.textBody.value = currentText.body;
-
-		updateCodeBox();
-	}
 
 	function applyTheme(theme) {
 		currentTheme = theme === "light" ? "light" : "dark";
@@ -277,12 +237,8 @@
 		activePresetKey = key;
 		const preset = PRESETS[key];
 		Object.entries(preset.vars).forEach(([k, v]) => setVar(k, v));
-		applyText({
-			title: preset.label,
-			subtitle: preset.subtitle,
-			body: currentText.body,
-		});
 		syncInputsFromVars();
+		updateCodeBox();
 		updateActiveChip();
 		updateMiniSelection();
 	}
@@ -327,9 +283,6 @@
 			shadow: getVar("--glass-shadow-strength"),
 			preset: activePresetKey,
 			background: activeBackgroundKey,
-			title: currentText.title,
-			subtitle: currentText.subtitle,
-			body: currentText.body,
 		};
 	}
 
@@ -353,9 +306,6 @@
 		params.set("tintAlpha", String(Number(v.tintAlpha).toFixed(2)));
 		params.set("noise", String(Number(v.noise).toFixed(2)));
 		params.set("shadow", String(Number(v.shadow).toFixed(2)));
-		params.set("title", v.title);
-		params.set("subtitle", v.subtitle);
-		params.set("body", v.body);
 		return `#${params.toString()}`;
 	}
 
@@ -404,15 +354,6 @@
 		if (shadow !== null && shadow !== "")
 			setVar("--glass-shadow-strength", String(Number(shadow)));
 
-		const title = params.get("title");
-		const subtitle = params.get("subtitle");
-		const body = params.get("body");
-		applyText({
-			title: title ?? currentText.title,
-			subtitle: subtitle ?? currentText.subtitle,
-			body: body ?? currentText.body,
-		});
-
 		syncInputsFromVars();
 		updateActiveChip();
 		updateMiniSelection();
@@ -428,21 +369,9 @@
 	}
 
 	function buildHtmlSnippet() {
-		const title = escapeHtml(currentText.title || "Glass Card");
-		const subtitle = escapeHtml(currentText.subtitle || "Your subtitle");
-		const body = escapeHtml(
-			currentText.body || "Content goes here..."
-		).replaceAll("\n", "<br />");
 		return `<div class="glass-card">
-	<div class="glass-card__header">
-		<div>
-			<div class="glass-title">${title}</div>
-			<div class="glass-subtitle">${subtitle}</div>
-		</div>
-		<div class="glass-badge">glass</div>
-	</div>
-	<div class="glass-card__body">
-		<p>${body}</p>
+	<div class="glass-center">
+		<div class="glass-center__text">Glass Effect</div>
 	</div>
 </div>`;
 	}
@@ -497,6 +426,22 @@
 	background-size: 180px 180px;
 	mix-blend-mode: overlay;
 	pointer-events: none;
+}
+
+.glass-center {
+	min-height: 220px;
+	display: grid;
+	place-items: center;
+	padding: 36px;
+}
+
+.glass-center__text {
+	font-size: clamp(1.25rem, 1rem + 2vw, 2.2rem);
+	letter-spacing: 0.02em;
+	font-weight: 800;
+	text-align: center;
+	color: rgba(255, 255, 255, 0.92);
+	text-shadow: 0 8px 26px rgba(0, 0, 0, 0.35);
 }`;
 	}
 
@@ -567,24 +512,6 @@
 				updateCodeBox();
 			});
 		});
-
-		if (inputs.textTitle) {
-			inputs.textTitle.addEventListener("input", () => {
-				applyText({ title: inputs.textTitle.value });
-			});
-		}
-
-		if (inputs.textSubtitle) {
-			inputs.textSubtitle.addEventListener("input", () => {
-				applyText({ subtitle: inputs.textSubtitle.value });
-			});
-		}
-
-		if (inputs.textBody) {
-			inputs.textBody.addEventListener("input", () => {
-				applyText({ body: inputs.textBody.value });
-			});
-		}
 	}
 
 	function renderChips() {
@@ -645,7 +572,6 @@
 	function initSupportPill() {
 		const ok = supportsBackdropFilter();
 		if (!ok) document.body.classList.add("no-backdrop");
-		previewBadge.textContent = ok ? "backdrop" : "fallback";
 		supportPill.textContent = ok
 			? "Backdrop blur: supported"
 			: "Backdrop blur: not supported (fallback)";
@@ -706,11 +632,6 @@
 				const data = {
 					preset: activePresetKey,
 					background: activeBackgroundKey,
-					text: {
-						title: currentText.title,
-						subtitle: currentText.subtitle,
-						body: currentText.body,
-					},
 					vars: {
 						blur: currentCssValues().blur,
 						opacity: currentCssValues().opacity,
@@ -747,13 +668,6 @@
 					if (data && data.background) setBackground(data.background);
 					if (data && data.preset && PRESETS[data.preset])
 						applyPreset(data.preset);
-					if (data && data.text) {
-						applyText({
-							title: data.text.title,
-							subtitle: data.text.subtitle,
-							body: data.text.body,
-						});
-					}
 					if (data && data.vars) {
 						const v = data.vars;
 						if (v.blur) setVar("--glass-blur", String(v.blur));
@@ -793,7 +707,6 @@
 		renderMiniGallery();
 		renderBackgroundChips();
 		setBackground(activeBackgroundKey);
-		applyText(currentText);
 
 		const restored = applyFromHashIfPresent();
 		if (!restored) {
