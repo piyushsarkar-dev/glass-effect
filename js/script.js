@@ -9,6 +9,7 @@
 	const previewSubtitle = $("#previewSubtitle");
 	const previewBadge = $("#previewBadge");
 	const supportPill = $("#supportPill");
+	const themeToggle = $("#themeToggle");
 	const styleChips = $("#styleChips");
 	const miniGallery = $("#miniGallery");
 	const codeBox = $("#codeBox");
@@ -119,6 +120,37 @@
 
 	let activePresetKey = "iphone";
 	let defaultVars = null;
+	let currentTheme = "dark";
+
+	function applyTheme(theme) {
+		currentTheme = theme === "light" ? "light" : "dark";
+		document.body.classList.toggle("theme-dark", currentTheme === "dark");
+		document.body.classList.toggle("theme-light", currentTheme === "light");
+		if (themeToggle) themeToggle.checked = currentTheme === "dark";
+		try {
+			localStorage.setItem("glassTheme", currentTheme);
+		} catch {
+			// ignore
+		}
+	}
+
+	function initTheme() {
+		let saved = null;
+		try {
+			saved = localStorage.getItem("glassTheme");
+		} catch {
+			saved = null;
+		}
+
+		// Default: dark (user asked for dark mode), but allow saved choice
+		applyTheme(saved || "dark");
+
+		if (themeToggle) {
+			themeToggle.addEventListener("change", () => {
+				applyTheme(themeToggle.checked ? "dark" : "light");
+			});
+		}
+	}
 
 	function supportsBackdropFilter() {
 		return (
@@ -457,6 +489,7 @@
 	}
 
 	function init() {
+		initTheme();
 		initSupportPill();
 		renderChips();
 		renderMiniGallery();

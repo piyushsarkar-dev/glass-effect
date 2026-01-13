@@ -21,18 +21,36 @@
 					<div
 						class="d-flex flex-wrap align-items-end justify-content-between gap-2">
 						<div>
-							<h1 class="h3 text-white mb-1">
+							<h1 class="h3 app-title mb-1">
 								Glass Effects (iPhone-style)
 							</h1>
-							<p class="text-white-50 mb-0">
+							<p class="app-subtitle mb-0">
 								Famous glass styles + live customize + এক ক্লিকে
 								code copy.
 							</p>
 						</div>
-						<div
-							class="support-pill"
-							id="supportPill"
-							aria-live="polite"></div>
+						<div class="d-flex flex-wrap align-items-center gap-2">
+							<div
+								class="theme-toggle"
+								aria-label="Theme">
+								<div class="form-check form-switch m-0">
+									<input
+										class="form-check-input"
+										type="checkbox"
+										role="switch"
+										id="themeToggle" />
+									<label
+										class="form-check-label"
+										for="themeToggle">
+										Dark mode
+									</label>
+								</div>
+							</div>
+							<div
+								class="support-pill"
+								id="supportPill"
+								aria-live="polite"></div>
+						</div>
 					</div>
 				</header>
 
@@ -235,7 +253,7 @@
 								rows="14"
 								spellcheck="false"></textarea>
 							<div
-								class="small text-white-50 mt-2"
+								class="small app-subtitle mt-2"
 								id="copyStatus"
 								aria-live="polite"></div>
 						</div>
