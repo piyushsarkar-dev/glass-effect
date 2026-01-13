@@ -83,7 +83,9 @@
 									</div>
 								</div>
 								<div class="glass-card__body">
-									<p class="mb-2">
+									<p
+										class="mb-2"
+										id="previewBodyText">
 										Use the controls to tweak blur, opacity,
 										tint, border, noise.
 									</p>
@@ -225,6 +227,44 @@
 
 							<hr class="panel__hr" />
 
+							<div class="panel__title">Background</div>
+							<div
+								class="d-flex flex-wrap gap-2"
+								id="bgChips"
+								aria-label="Background presets"></div>
+
+							<hr class="panel__hr" />
+
+							<div class="panel__title">Text</div>
+							<div class="row g-2">
+								<div class="col-12">
+									<label class="form-label">Title</label>
+									<input
+										class="form-control form-control-sm"
+										type="text"
+										id="textTitle"
+										placeholder="Glass Card" />
+								</div>
+								<div class="col-12">
+									<label class="form-label">Subtitle</label>
+									<input
+										class="form-control form-control-sm"
+										type="text"
+										id="textSubtitle"
+										placeholder="Your subtitle" />
+								</div>
+								<div class="col-12">
+									<label class="form-label">Body</label>
+									<textarea
+										class="form-control form-control-sm"
+										id="textBody"
+										rows="3"
+										placeholder="Write your content..."></textarea>
+								</div>
+							</div>
+
+							<hr class="panel__hr" />
+
 							<div class="panel__title">Copy Code</div>
 							<div class="d-flex flex-wrap gap-2 mb-2">
 								<button
@@ -257,6 +297,33 @@
 								class="small app-subtitle mt-2"
 								id="copyStatus"
 								aria-live="polite"></div>
+
+							<hr class="panel__hr" />
+
+							<div class="panel__title">Share & Save</div>
+							<div class="d-flex flex-wrap gap-2 mb-2">
+								<button
+									class="btn btn-outline-light btn-sm"
+									id="copyLink">
+									Copy Link
+								</button>
+								<button
+									class="btn btn-outline-light btn-sm"
+									id="exportSettings">
+									Export Settings
+								</button>
+								<button
+									class="btn btn-outline-light btn-sm"
+									id="importSettings">
+									Import Settings
+								</button>
+							</div>
+							<textarea
+								class="codebox codebox--settings"
+								id="settingsBox"
+								rows="6"
+								spellcheck="false"
+								placeholder='Paste settings JSON here, then click "Import Settings".'></textarea>
 						</div>
 					</div>
 				</div>

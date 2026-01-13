@@ -7,13 +7,17 @@
 	const root = document.documentElement;
 	const previewTitle = $("#previewTitle");
 	const previewSubtitle = $("#previewSubtitle");
+	const previewBodyText = $("#previewBodyText");
 	const previewBadge = $("#previewBadge");
 	const supportPill = $("#supportPill");
 	const themeToggle = $("#themeToggle");
+	const appBg = $(".app-bg");
 	const styleChips = $("#styleChips");
 	const miniGallery = $("#miniGallery");
 	const codeBox = $("#codeBox");
 	const copyStatus = $("#copyStatus");
+	const bgChips = $("#bgChips");
+	const settingsBox = $("#settingsBox");
 
 	const inputs = {
 		blur: $("#blur"),
@@ -26,6 +30,9 @@
 		tintAlpha: $("#tintAlpha"),
 		noise: $("#noise"),
 		shadow: $("#shadow"),
+		textTitle: $("#textTitle"),
+		textSubtitle: $("#textSubtitle"),
+		textBody: $("#textBody"),
 	};
 
 	const buttons = {
@@ -33,6 +40,15 @@
 		copyHTML: $("#copyHTML"),
 		copyCSS: $("#copyCSS"),
 		reset: $("#reset"),
+		copyLink: $("#copyLink"),
+		exportSettings: $("#exportSettings"),
+		importSettings: $("#importSettings"),
+	};
+
+	const BACKGROUNDS = {
+		photo: { label: "Photo", className: "bg-photo" },
+		gradient: { label: "Gradient", className: "bg-gradient" },
+		dark: { label: "Dark", className: "bg-dark" },
 	};
 
 	const PRESETS = {
@@ -121,6 +137,40 @@
 	let activePresetKey = "iphone";
 	let defaultVars = null;
 	let currentTheme = "dark";
+	let activeBackgroundKey = "photo";
+	let currentText = {
+		title: "iPhone Frosted",
+		subtitle: "Clean, soft blur — mobile style.",
+		body: "Use the controls to tweak blur, opacity, tint, border, noise.",
+	};
+
+	function applyText(next) {
+		currentText = {
+			title:
+				typeof next?.title === "string" && next.title.trim()
+					? next.title
+					: currentText.title,
+			subtitle:
+				typeof next?.subtitle === "string" && next.subtitle.trim()
+					? next.subtitle
+					: currentText.subtitle,
+			body:
+				typeof next?.body === "string" && next.body.trim()
+					? next.body
+					: currentText.body,
+		};
+
+		if (previewTitle) previewTitle.textContent = currentText.title;
+		if (previewSubtitle) previewSubtitle.textContent = currentText.subtitle;
+		if (previewBodyText) previewBodyText.textContent = currentText.body;
+
+		if (inputs.textTitle) inputs.textTitle.value = currentText.title;
+		if (inputs.textSubtitle)
+			inputs.textSubtitle.value = currentText.subtitle;
+		if (inputs.textBody) inputs.textBody.value = currentText.body;
+
+		updateCodeBox();
+	}
 
 	function applyTheme(theme) {
 		currentTheme = theme === "light" ? "light" : "dark";
@@ -143,6 +193,46 @@
 				applyTheme(themeToggle.checked ? "dark" : "light");
 			});
 		}
+	}
+
+	function setBackground(key) {
+		const bg = BACKGROUNDS[key] ? key : "photo";
+		activeBackgroundKey = bg;
+		if (appBg) {
+			Object.values(BACKGROUNDS).forEach((b) => {
+				appBg.classList.remove(b.className);
+			});
+			appBg.classList.add(BACKGROUNDS[bg].className);
+		}
+		updateBackgroundSelection();
+	}
+
+	function updateBackgroundSelection() {
+		if (!bgChips) return;
+		$$("#bgChips .chip").forEach((el) => {
+			el.classList.toggle(
+				"active",
+				el.dataset.bg === activeBackgroundKey
+			);
+		});
+	}
+
+	function renderBackgroundChips() {
+		if (!bgChips) return;
+		bgChips.innerHTML = "";
+		Object.entries(BACKGROUNDS).forEach(([key, bg]) => {
+			const btn = document.createElement("button");
+			btn.type = "button";
+			btn.className = "chip";
+			btn.dataset.bg = key;
+			btn.textContent = bg.label;
+			btn.addEventListener("click", () => {
+				setBackground(key);
+				setStatus(`Background: ${bg.label}`);
+			});
+			bgChips.appendChild(btn);
+		});
+		updateBackgroundSelection();
 	}
 
 	function supportsBackdropFilter() {
@@ -187,10 +277,12 @@
 		activePresetKey = key;
 		const preset = PRESETS[key];
 		Object.entries(preset.vars).forEach(([k, v]) => setVar(k, v));
-		previewTitle.textContent = preset.label;
-		previewSubtitle.textContent = preset.subtitle;
+		applyText({
+			title: preset.label,
+			subtitle: preset.subtitle,
+			body: currentText.body,
+		});
 		syncInputsFromVars();
-		updateCodeBox();
 		updateActiveChip();
 		updateMiniSelection();
 	}
@@ -233,21 +325,124 @@
 			tintAlpha: getVar("--glass-tint-alpha"),
 			noise: getVar("--glass-noise"),
 			shadow: getVar("--glass-shadow-strength"),
+			preset: activePresetKey,
+			background: activeBackgroundKey,
+			title: currentText.title,
+			subtitle: currentText.subtitle,
+			body: currentText.body,
 		};
 	}
 
+	function numericForUrl(cssValue) {
+		const n = numberFromCss(cssValue);
+		return Number.isFinite(n) ? String(n) : "";
+	}
+
+	function buildShareHash() {
+		const v = currentCssValues();
+		const params = new URLSearchParams();
+		params.set("preset", v.preset);
+		params.set("bg", v.background);
+		params.set("blur", numericForUrl(v.blur));
+		params.set("opacity", String(Number(v.opacity).toFixed(2)));
+		params.set("sat", numericForUrl(v.sat));
+		params.set("bright", numericForUrl(v.bright));
+		params.set("border", String(Number(v.border).toFixed(2)));
+		params.set("radius", numericForUrl(v.radius));
+		params.set("tintHue", String(Number(v.tintHue)));
+		params.set("tintAlpha", String(Number(v.tintAlpha).toFixed(2)));
+		params.set("noise", String(Number(v.noise).toFixed(2)));
+		params.set("shadow", String(Number(v.shadow).toFixed(2)));
+		params.set("title", v.title);
+		params.set("subtitle", v.subtitle);
+		params.set("body", v.body);
+		return `#${params.toString()}`;
+	}
+
+	function buildShareUrl() {
+		const base = window.location.href.split("#")[0];
+		return `${base}${buildShareHash()}`;
+	}
+
+	function applyFromParams(params) {
+		const preset = params.get("preset");
+		if (preset && PRESETS[preset]) {
+			applyPreset(preset);
+		}
+
+		const bg = params.get("bg");
+		if (bg && BACKGROUNDS[bg]) setBackground(bg);
+
+		const blur = params.get("blur");
+		if (blur !== null && blur !== "")
+			setVar("--glass-blur", `${Number(blur)}px`);
+		const opacity = params.get("opacity");
+		if (opacity !== null && opacity !== "")
+			setVar("--glass-bg-opacity", String(Number(opacity)));
+		const sat = params.get("sat");
+		if (sat !== null && sat !== "")
+			setVar("--glass-sat", `${Number(sat)}%`);
+		const bright = params.get("bright");
+		if (bright !== null && bright !== "")
+			setVar("--glass-bright", `${Number(bright)}%`);
+		const border = params.get("border");
+		if (border !== null && border !== "")
+			setVar("--glass-border-alpha", String(Number(border)));
+		const radius = params.get("radius");
+		if (radius !== null && radius !== "")
+			setVar("--glass-radius", `${Number(radius)}px`);
+		const tintHue = params.get("tintHue");
+		if (tintHue !== null && tintHue !== "")
+			setVar("--glass-tint-hue", String(Number(tintHue)));
+		const tintAlpha = params.get("tintAlpha");
+		if (tintAlpha !== null && tintAlpha !== "")
+			setVar("--glass-tint-alpha", String(Number(tintAlpha)));
+		const noise = params.get("noise");
+		if (noise !== null && noise !== "")
+			setVar("--glass-noise", String(Number(noise)));
+		const shadow = params.get("shadow");
+		if (shadow !== null && shadow !== "")
+			setVar("--glass-shadow-strength", String(Number(shadow)));
+
+		const title = params.get("title");
+		const subtitle = params.get("subtitle");
+		const body = params.get("body");
+		applyText({
+			title: title ?? currentText.title,
+			subtitle: subtitle ?? currentText.subtitle,
+			body: body ?? currentText.body,
+		});
+
+		syncInputsFromVars();
+		updateActiveChip();
+		updateMiniSelection();
+	}
+
+	function applyFromHashIfPresent() {
+		const raw = window.location.hash ? window.location.hash.slice(1) : "";
+		if (!raw) return false;
+		const params = new URLSearchParams(raw);
+		if (![...params.keys()].length) return false;
+		applyFromParams(params);
+		return true;
+	}
+
 	function buildHtmlSnippet() {
-		const title = escapeHtml(previewTitle.textContent || "Glass Card");
+		const title = escapeHtml(currentText.title || "Glass Card");
+		const subtitle = escapeHtml(currentText.subtitle || "Your subtitle");
+		const body = escapeHtml(
+			currentText.body || "Content goes here..."
+		).replaceAll("\n", "<br />");
 		return `<div class="glass-card">
 	<div class="glass-card__header">
 		<div>
 			<div class="glass-title">${title}</div>
-			<div class="glass-subtitle">Your text here</div>
+			<div class="glass-subtitle">${subtitle}</div>
 		</div>
 		<div class="glass-badge">glass</div>
 	</div>
 	<div class="glass-card__body">
-		<p>Content goes here…</p>
+		<p>${body}</p>
 	</div>
 </div>`;
 	}
@@ -372,6 +567,24 @@
 				updateCodeBox();
 			});
 		});
+
+		if (inputs.textTitle) {
+			inputs.textTitle.addEventListener("input", () => {
+				applyText({ title: inputs.textTitle.value });
+			});
+		}
+
+		if (inputs.textSubtitle) {
+			inputs.textSubtitle.addEventListener("input", () => {
+				applyText({ subtitle: inputs.textSubtitle.value });
+			});
+		}
+
+		if (inputs.textBody) {
+			inputs.textBody.addEventListener("input", () => {
+				applyText({ body: inputs.textBody.value });
+			});
+		}
 	}
 
 	function renderChips() {
@@ -479,6 +692,98 @@
 			applyPreset(activePresetKey);
 			setStatus("Preset reset.");
 		});
+
+		if (buttons.copyLink) {
+			buttons.copyLink.addEventListener("click", async () => {
+				const url = buildShareUrl();
+				const ok = await copyText(url);
+				setStatus(ok ? "Copied: Link" : "Copy failed");
+			});
+		}
+
+		if (buttons.exportSettings) {
+			buttons.exportSettings.addEventListener("click", async () => {
+				const data = {
+					preset: activePresetKey,
+					background: activeBackgroundKey,
+					text: {
+						title: currentText.title,
+						subtitle: currentText.subtitle,
+						body: currentText.body,
+					},
+					vars: {
+						blur: currentCssValues().blur,
+						opacity: currentCssValues().opacity,
+						sat: currentCssValues().sat,
+						bright: currentCssValues().bright,
+						border: currentCssValues().border,
+						radius: currentCssValues().radius,
+						tintHue: currentCssValues().tintHue,
+						tintAlpha: currentCssValues().tintAlpha,
+						noise: currentCssValues().noise,
+						shadow: currentCssValues().shadow,
+					},
+				};
+				const json = JSON.stringify(data, null, 2);
+				if (settingsBox) settingsBox.value = json;
+				const ok = await copyText(json);
+				setStatus(
+					ok
+						? "Copied: Settings JSON"
+						: "Settings ready (copy manually)"
+				);
+			});
+		}
+
+		if (buttons.importSettings) {
+			buttons.importSettings.addEventListener("click", () => {
+				const raw = settingsBox ? settingsBox.value.trim() : "";
+				if (!raw) {
+					setStatus("Paste settings JSON first.");
+					return;
+				}
+				try {
+					const data = JSON.parse(raw);
+					if (data && data.background) setBackground(data.background);
+					if (data && data.preset && PRESETS[data.preset])
+						applyPreset(data.preset);
+					if (data && data.text) {
+						applyText({
+							title: data.text.title,
+							subtitle: data.text.subtitle,
+							body: data.text.body,
+						});
+					}
+					if (data && data.vars) {
+						const v = data.vars;
+						if (v.blur) setVar("--glass-blur", String(v.blur));
+						if (v.opacity)
+							setVar("--glass-bg-opacity", String(v.opacity));
+						if (v.sat) setVar("--glass-sat", String(v.sat));
+						if (v.bright)
+							setVar("--glass-bright", String(v.bright));
+						if (v.border)
+							setVar("--glass-border-alpha", String(v.border));
+						if (v.radius)
+							setVar("--glass-radius", String(v.radius));
+						if (v.tintHue)
+							setVar("--glass-tint-hue", String(v.tintHue));
+						if (v.tintAlpha)
+							setVar("--glass-tint-alpha", String(v.tintAlpha));
+						if (v.noise) setVar("--glass-noise", String(v.noise));
+						if (v.shadow)
+							setVar("--glass-shadow-strength", String(v.shadow));
+					}
+					syncInputsFromVars();
+					updateCodeBox();
+					updateActiveChip();
+					updateMiniSelection();
+					setStatus("Imported settings.");
+				} catch {
+					setStatus("Invalid JSON.");
+				}
+			});
+		}
 	}
 
 	function init() {
@@ -486,7 +791,14 @@
 		initSupportPill();
 		renderChips();
 		renderMiniGallery();
-		applyPreset(activePresetKey);
+		renderBackgroundChips();
+		setBackground(activeBackgroundKey);
+		applyText(currentText);
+
+		const restored = applyFromHashIfPresent();
+		if (!restored) {
+			applyPreset(activePresetKey);
+		}
 		snapshotDefaultVars();
 		attachInputHandlers();
 		attachButtonHandlers();
