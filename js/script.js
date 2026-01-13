@@ -127,23 +127,16 @@
 		document.body.classList.toggle("theme-dark", currentTheme === "dark");
 		document.body.classList.toggle("theme-light", currentTheme === "light");
 		if (themeToggle) themeToggle.checked = currentTheme === "dark";
-		try {
-			localStorage.setItem("glassTheme", currentTheme);
-		} catch {
-			// ignore
-		}
 	}
 
 	function initTheme() {
-		let saved = null;
+		// Always start in dark mode on every visit.
+		applyTheme("dark");
 		try {
-			saved = localStorage.getItem("glassTheme");
+			localStorage.removeItem("glassTheme");
 		} catch {
-			saved = null;
+			// ignore
 		}
-
-		// Default: dark (user asked for dark mode), but allow saved choice
-		applyTheme(saved || "dark");
 
 		if (themeToggle) {
 			themeToggle.addEventListener("change", () => {
