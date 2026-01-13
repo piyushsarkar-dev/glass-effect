@@ -1,39 +1,256 @@
-body {
-	height: 200vh;
-	width: 100%;
+:root {
+	--glass-bg-opacity: 0.16;
+	--glass-border-alpha: 0.28;
+	--glass-blur: 18px;
+	--glass-sat: 160%;
+	--glass-bright: 115%;
+	--glass-radius: 22px;
+	--glass-tint-hue: 210;
+	--glass-tint-alpha: 0.08;
+	--glass-noise: 0.06;
+	--glass-shadow-strength: 0.72;
 }
-.bg-1 {
+
+html,
+body {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	background: #070a12;
+}
+
+.app-bg {
+	min-height: 100vh;
+	width: 100%;
 	background-image: url("https://images.unsplash.com/photo-1532767153582-b1a0e5145009?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-	height: 200vh;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	position: relative;
 }
-.boxx {
-	background-color: rgb(197, 196, 196);
-	background-clip: padding-box;
+
+.app-bg::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+			180deg,
+			rgba(0, 0, 0, 0.55),
+			rgba(0, 0, 0, 0.12)
+		),
+		radial-gradient(
+			1200px 600px at 15% 15%,
+			rgba(0, 0, 0, 0.35),
+			transparent 55%
+		),
+		radial-gradient(
+			900px 500px at 85% 20%,
+			rgba(0, 0, 0, 0.25),
+			transparent 60%
+		),
+		radial-gradient(
+			900px 700px at 60% 95%,
+			rgba(0, 0, 0, 0.35),
+			transparent 60%
+		);
+	pointer-events: none;
+}
+
+.app-bg > .container {
+	position: relative;
+}
+
+.support-pill {
+	font-size: 0.875rem;
+	color: rgba(255, 255, 255, 0.75);
+	padding: 0.35rem 0.65rem;
+	border-radius: 999px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	background: rgba(0, 0, 0, 0.25);
 	backdrop-filter: blur(8px);
-	opacity: 75%;
-	height: 35vh;
-	width: 45vh;
-	position: fixed;
-	top: 16%;
-	background: rgba(255, 255, 255, 0.2);
-	border-radius: 16px;
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-	border: 1px solid rgba(255, 255, 255, 0.3);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
+	-webkit-backdrop-filter: blur(8px);
 }
-span {
-	font-size: 2.5vh;
-	font-weight: bold;
-	font-family: "Edu NSW ACT Cursive", cursive;
-	color: rgb(0, 0, 0);
+
+.preview-stage {
+	border-radius: 28px;
+	padding: 1.2rem;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	background: rgba(0, 0, 0, 0.16);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+}
+
+.glass-card {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--glass-radius);
+	border: 1px solid rgba(255, 255, 255, var(--glass-border-alpha));
+	background: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, calc(var(--glass-bg-opacity) + 0.06)),
+			rgba(255, 255, 255, calc(var(--glass-bg-opacity) - 0.02))
+		),
+		hsla(var(--glass-tint-hue) 100% 55% / var(--glass-tint-alpha));
+	box-shadow: 0 18px 52px
+			rgba(0, 0, 0, calc(0.42 * var(--glass-shadow-strength))),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat))
+		brightness(var(--glass-bright));
+	-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat))
+		brightness(var(--glass-bright));
+	color: rgba(255, 255, 255, 0.92);
+}
+
+.glass-card::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(
+		900px 420px at 15% 12%,
+		rgba(255, 255, 255, 0.22),
+		transparent 55%
+	);
+	pointer-events: none;
+}
+
+.glass-card::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	opacity: var(--glass-noise);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+	background-size: 180px 180px;
+	mix-blend-mode: overlay;
+	pointer-events: none;
+}
+
+.glass-card__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 1.15rem 1.15rem 0.25rem;
+	position: relative;
+	z-index: 1;
+}
+
+.glass-card__body {
+	padding: 0.65rem 1.15rem 1.15rem;
+	position: relative;
+	z-index: 1;
+}
+
+.glass-title {
+	font-size: 1.05rem;
+	font-weight: 700;
+	letter-spacing: 0.2px;
+	text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+.glass-subtitle {
+	font-size: 0.95rem;
+	color: rgba(255, 255, 255, 0.72);
+}
+
+.glass-badge {
+	font-size: 0.75rem;
+	color: rgba(255, 255, 255, 0.75);
+	border: 1px solid rgba(255, 255, 255, 0.22);
+	border-radius: 999px;
+	padding: 0.2rem 0.55rem;
+	background: rgba(0, 0, 0, 0.14);
+}
+
+.glass-list {
+	margin: 0;
+	padding-left: 1.15rem;
+	color: rgba(255, 255, 255, 0.78);
+}
+
+.panel {
+	border-radius: 22px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	background: rgba(0, 0, 0, 0.22);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	padding: 1rem;
+	color: rgba(255, 255, 255, 0.92);
+}
+
+.panel__title {
+	font-weight: 700;
+	margin-bottom: 0.75rem;
+}
+
+.panel__hr {
+	border-color: rgba(255, 255, 255, 0.14);
+	opacity: 1;
+}
+
+.panel .form-label {
+	font-size: 0.85rem;
+	margin-bottom: 0.35rem;
+	color: rgba(255, 255, 255, 0.75);
+}
+
+.codebox {
+	width: 100%;
+	border-radius: 14px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	background: rgba(0, 0, 0, 0.4);
+	color: rgba(255, 255, 255, 0.9);
+	padding: 0.75rem;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+		"Liberation Mono", "Courier New", monospace;
+	font-size: 0.82rem;
+	line-height: 1.35;
+	resize: vertical;
+}
+
+.chip {
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	background: rgba(0, 0, 0, 0.22);
+	color: rgba(255, 255, 255, 0.9);
+	border-radius: 999px;
+	padding: 0.35rem 0.7rem;
+	font-size: 0.85rem;
+}
+
+.chip.active {
+	border-color: rgba(255, 255, 255, 0.4);
+	background: rgba(255, 255, 255, 0.14);
+}
+
+.mini {
+	padding: 0.85rem;
+	min-height: 110px;
+	cursor: pointer;
+}
+
+.mini .glass-title {
+	font-size: 0.95rem;
+}
+
+.mini .glass-subtitle {
+	font-size: 0.82rem;
+}
+
+/* Fallback when blur isn't supported (keeps it looking like iPhone-style “tinted glass”) */
+body.no-backdrop .glass-card,
+body.no-backdrop .preview-stage,
+body.no-backdrop .panel,
+body.no-backdrop .support-pill {
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+}
+
+body.no-backdrop .glass-card {
+	background: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.22),
+			rgba(255, 255, 255, 0.12)
+		),
+		hsla(var(--glass-tint-hue) 100% 55% / 0.12);
 }

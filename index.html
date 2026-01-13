@@ -8,29 +8,239 @@
 
 		<link
 			rel="stylesheet"
-			href="css/style.css" />
+			href="css/bootstrap.min.css" />
 		<link
 			rel="stylesheet"
-			href="css/bootstrap.min.css" />
-		<title>glass-effect</title>
+			href="css/style.css" />
+		<title>Glass Effects (iPhone-style)</title>
 	</head>
 	<body>
-		<div class="bg-1">
-			<div class="boxx text-black">
-				<span><u> Glassmorphism-center-box</u></span>
-				<span>Scroll me </span>
-				<br />
-				<span
-					><svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="36"
-						height="36"
-						fill="currentColor"
-						class="bi bi-mouse"
-						viewBox="0 0 16 16">
-						<path
-							d="M8 3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 3m4 8a4 4 0 0 1-8 0V5a4 4 0 1 1 8 0zM8 0a5 5 0 0 0-5 5v6a5 5 0 0 0 10 0V5a5 5 0 0 0-5-5" /></svg
-				></span>
+		<div class="app-bg">
+			<div class="container py-4 py-md-5">
+				<header class="mb-4">
+					<div
+						class="d-flex flex-wrap align-items-end justify-content-between gap-2">
+						<div>
+							<h1 class="h3 text-white mb-1">
+								Glass Effects (iPhone-style)
+							</h1>
+							<p class="text-white-50 mb-0">
+								Famous glass styles + live customize + এক ক্লিকে
+								code copy.
+							</p>
+						</div>
+						<div
+							class="support-pill"
+							id="supportPill"
+							aria-live="polite"></div>
+					</div>
+				</header>
+
+				<div class="row g-3 g-lg-4 align-items-start">
+					<div class="col-12 col-lg-7">
+						<div class="preview-stage">
+							<div
+								class="glass-card"
+								id="previewCard"
+								role="region"
+								aria-label="Glass preview">
+								<div class="glass-card__header">
+									<div>
+										<div
+											class="glass-title"
+											id="previewTitle">
+											iPhone Frosted
+										</div>
+										<div
+											class="glass-subtitle"
+											id="previewSubtitle">
+											Clean, soft blur — mobile style.
+										</div>
+									</div>
+									<div
+										class="glass-badge"
+										id="previewBadge">
+										backdrop
+									</div>
+								</div>
+								<div class="glass-card__body">
+									<p class="mb-2">
+										Use the controls to tweak blur, opacity,
+										tint, border, noise.
+									</p>
+									<ul class="glass-list">
+										<li>Looks great on photos</li>
+										<li>Fallback if blur unsupported</li>
+										<li>Copy-ready HTML + CSS</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						<div class="mt-3">
+							<div
+								class="d-flex flex-wrap gap-2"
+								id="styleChips"
+								aria-label="Style presets"></div>
+						</div>
+
+						<div
+							class="row g-3 mt-1"
+							id="miniGallery"
+							aria-label="Mini preview gallery"></div>
+					</div>
+
+					<div class="col-12 col-lg-5">
+						<div class="panel">
+							<div class="panel__title">Customize</div>
+							<div class="row g-3">
+								<div class="col-6">
+									<label class="form-label">Blur (px)</label>
+									<input
+										class="form-range"
+										type="range"
+										id="blur"
+										min="0"
+										max="40"
+										step="1" />
+								</div>
+								<div class="col-6">
+									<label class="form-label">Opacity</label>
+									<input
+										class="form-range"
+										type="range"
+										id="opacity"
+										min="0.05"
+										max="0.45"
+										step="0.01" />
+								</div>
+								<div class="col-6">
+									<label class="form-label"
+										>Saturation (%)</label
+									>
+									<input
+										class="form-range"
+										type="range"
+										id="sat"
+										min="80"
+										max="220"
+										step="1" />
+								</div>
+								<div class="col-6">
+									<label class="form-label"
+										>Brightness (%)</label
+									>
+									<input
+										class="form-range"
+										type="range"
+										id="bright"
+										min="90"
+										max="140"
+										step="1" />
+								</div>
+								<div class="col-6">
+									<label class="form-label"
+										>Border alpha</label
+									>
+									<input
+										class="form-range"
+										type="range"
+										id="border"
+										min="0.0"
+										max="0.65"
+										step="0.01" />
+								</div>
+								<div class="col-6">
+									<label class="form-label"
+										>Radius (px)</label
+									>
+									<input
+										class="form-range"
+										type="range"
+										id="radius"
+										min="8"
+										max="40"
+										step="1" />
+								</div>
+								<div class="col-6">
+									<label class="form-label">Tint hue</label>
+									<input
+										class="form-range"
+										type="range"
+										id="tintHue"
+										min="0"
+										max="360"
+										step="1" />
+								</div>
+								<div class="col-6">
+									<label class="form-label">Tint alpha</label>
+									<input
+										class="form-range"
+										type="range"
+										id="tintAlpha"
+										min="0"
+										max="0.25"
+										step="0.01" />
+								</div>
+								<div class="col-6">
+									<label class="form-label">Noise</label>
+									<input
+										class="form-range"
+										type="range"
+										id="noise"
+										min="0"
+										max="0.14"
+										step="0.01" />
+								</div>
+								<div class="col-6">
+									<label class="form-label">Shadow</label>
+									<input
+										class="form-range"
+										type="range"
+										id="shadow"
+										min="0"
+										max="1"
+										step="0.02" />
+								</div>
+							</div>
+
+							<hr class="panel__hr" />
+
+							<div class="panel__title">Copy Code</div>
+							<div class="d-flex flex-wrap gap-2 mb-2">
+								<button
+									class="btn btn-light btn-sm"
+									id="copyAll">
+									Copy All
+								</button>
+								<button
+									class="btn btn-outline-light btn-sm"
+									id="copyHTML">
+									Copy HTML
+								</button>
+								<button
+									class="btn btn-outline-light btn-sm"
+									id="copyCSS">
+									Copy CSS
+								</button>
+								<button
+									class="btn btn-outline-light btn-sm"
+									id="reset">
+									Reset
+								</button>
+							</div>
+							<textarea
+								class="codebox"
+								id="codeBox"
+								rows="14"
+								spellcheck="false"></textarea>
+							<div
+								class="small text-white-50 mt-2"
+								id="copyStatus"
+								aria-live="polite"></div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 
